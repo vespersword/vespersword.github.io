@@ -23,10 +23,9 @@ inside their clouds.
 
 ![A 2-tier Clos (spine–leaf) fabric: every leaf switch connects to every spine switch, so any two hosts sit the same number of hops apart.](clos-network.svg)
 
-None of this is secret. It's all in AWS papers, NVIDIA docs, and conference
+None of this is really hidden. It's all in AWS papers, NVIDIA docs, and conference
 talks. But nobody hands you the map, and every explanation I found assumed I
 already understood three other things. So the next post is my attempt at the
 map: EFA vs. InfiniBand vs. Ethernet, what a Clos network actually is, AllReduce
 as the reason any of it matters, and why a book from 2017 ended up wrong in an
-interesting way. Not because Kleppmann made a mistake, but because the workloads
-changed.
+interesting way for modern AI workloads.

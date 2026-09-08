@@ -4,7 +4,7 @@ title: "About"
 
 ## Who I am
 
-I worked on AI infrastructure at Amazon for [X years], most recently on **AWS
+I worked on AI infrastructure at Amazon for ~2 years, most recently on **AWS
 SageMaker HyperPod** — the managed service for large-scale model training and
 inference. My work there centered on cluster resiliency features such as deep health checks
 and continuous health monitoring systems for the Kubernetes and Slurm offerings as well as 
