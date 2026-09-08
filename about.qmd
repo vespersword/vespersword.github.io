@@ -1,0 +1,33 @@
+---
+title: "About"
+---
+
+## Who I am
+
+I worked on AI infrastructure at Amazon for [X years], most recently on **AWS
+SageMaker HyperPod** — the managed service for large-scale model training and
+inference. My work there centered on cluster resiliency features such as deep health checks
+and continuous health monitoring systems for the Kubernetes and Slurm offerings as well as 
+bespoke features like tiered checkpointing. 
+
+I'm now in the UBC Master of Data Science program (2026 cohort).
+
+## What this site is
+
+A public notebook. I write up things I'm working through in machine learning —
+mostly LLMs, inference, and the infra systems that power them. Posts are mostly about what 
+I don't yet understand yet and cool stuff I'm reading about.
+
+## What I'm into right now
+
+- **AI Infrastructure** - large scale orchestration, resiliency, fault tolerance
+- **LLM inference internals** - tokenization, the KV cache, batching, inference at scale
+
+## Beyond this
+
+I also love chess and videogames so you might see a few posts on those topics as well!
+
+## Elsewhere
+
+- GitHub: [github.com/vespersword](https://github.com/vespersword)
+- LinkedIn: [https://www.linkedin.com/in/vaibhav-korrapati-604021191/](https://www.linkedin.com/in/vaibhav-korrapati-604021191/)

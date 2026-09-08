@@ -1,0 +1,12 @@
+---
+title: "Vaibhav's AI Notebook"
+---
+
+![Vaibhav Korrapati](images/profile.jpg){width=250px fig-alt="Photo of Vaibhav Korrapati"}
+
+Hi, I'm Vaibhav Korrapati. I worked on AI infrastructure at Amazon, most recently
+on AWS SageMaker HyperPod, keeping large-scale training and inference clusters
+running. This site is where I keep notes on the parts of machine learning I'm
+working through — models, inference, and the systems underneath them. I'm
+currently in the UBC Master of Data Science program, so some of it overlaps with
+coursework, but mostly it's just what I'm reading and building.
