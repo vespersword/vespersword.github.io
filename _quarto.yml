@@ -1,6 +1,11 @@
 project:
   type: website
   output-dir: docs
+  render:
+    - index.qmd
+    - about.qmd
+    - blog.qmd
+    - posts/*/index.qmd
   resources:
     - .nojekyll
 
