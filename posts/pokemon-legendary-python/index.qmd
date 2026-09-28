@@ -1,5 +1,5 @@
 ---
-title: "How much stronger are legendary Pokémon? (Python)"
+title: "How much stronger are legendary Pokemon? (Python)"
 author: "Vaibhav Korrapati"
 date: 2026-09-28
 categories: [python, pokemon, data analysis]
@@ -9,10 +9,10 @@ jupyter: python3
 We're gonna try exploring and proving with data whether legengaries are truly more
 powerful on average. (we'll also take a look at mythicals)
 
-We're going to do a pretty rudimentary analysis, every Pokémon has six base stats 
+We're going to do a pretty rudimentary analysis, every Pokemon has six base stats 
 (HP, Attack, Defense, Special Attack, Special Defense and Speed). 
 We're going to add these to get a **base stat total (BST)**, which we treat as a rough
-measure of how strong a Pokémon is. Legendary Pokémon are supposed to be the strongest 
+measure of how strong a Pokemon is. Legendary Pokemon are supposed to be the strongest 
 in the game, so this should help us get an idea of  how big the gap is.
 
 ## Data
@@ -21,7 +21,7 @@ The data is from [PokeAPI](https://pokeapi.co/)'s open dataset, taken from
 this repository: [GitHub](https://github.com/PokeAPI/pokeapi/tree/master/data/v2/csv)
 
 I use two tables: `pokemon_species.csv` (one row per species, with legendary
-and mythical flags) and `pokemon_stats.csv` (one row per Pokémon per stat).
+and mythical flags) and `pokemon_stats.csv` (one row per Pokemon per stat).
 
 ```{python}
 #| label: load-data
@@ -38,7 +38,7 @@ pokemon_stats.head()
 
 ## Calculating base stat totals
 
-Each Pokémon has six rows in `pokemon_stats`, so summing `base_stat` by
+Each Pokemon has six rows in `pokemon_stats`, so summing `base_stat` by
 `pokemon_id` gives its BST. We then merge that with the species table. Each
 species' default form has the same ID as the species, while alternate forms
 (like Mega evolutions) have IDs above 10000, so the merge keeps exactly one
@@ -60,19 +60,19 @@ df[["identifier", "generation_id", "bst", "group"]].head()
 
 ```{python}
 #| label: tbl-bst-by-group
-#| tbl-cap: "Base stat total summary for regular, legendary and mythical Pokémon."
+#| tbl-cap: "Base stat total summary for regular, legendary and mythical Pokemon."
 summary = df.groupby("group")["bst"].agg(["count", "mean", "median", "min", "max"])
 summary.round(1)
 ```
 
-@tbl-bst-by-group shows legendary and mythical Pokémon average roughly 180
-more base stat points than regular Pokémon. Most of the 1,025 species are
-regular, while legendary and mythical Pokémon together make up fewer than 100.
+@tbl-bst-by-group shows legendary and mythical Pokemon average roughly 180
+more base stat points than regular Pokemon. Most of the 1,025 species are
+regular, while legendary and mythical Pokemon together make up fewer than 100.
 
 ```{python}
 #| label: fig-bst-hist
-#| fig-cap: "Distribution of base stat totals for regular Pokémon compared with legendary and mythical Pokémon."
-#| fig-alt: "Two overlapping histograms of base stat total. Regular Pokémon are spread between roughly 200 and 600; legendary and mythical Pokémon are concentrated between 550 and 720."
+#| fig-cap: "Distribution of base stat totals for regular Pokemon compared with legendary and mythical Pokemon."
+#| fig-alt: "Two overlapping histograms of base stat total. Regular Pokemon are spread between roughly 200 and 600; legendary and mythical Pokemon are concentrated between 550 and 720."
 bins = range(150, 751, 25)
 special = df[df["group"] != "Regular"]
 regular = df[df["group"] == "Regular"]
@@ -80,7 +80,7 @@ regular = df[df["group"] == "Regular"]
 ax = regular["bst"].plot.hist(bins=bins, alpha=0.6, label="Regular")
 special["bst"].plot.hist(bins=bins, alpha=0.6, label="Legendary / Mythical", ax=ax)
 ax.set_xlabel("Base stat total")
-ax.set_ylabel("Number of Pokémon")
+ax.set_ylabel("Number of Pokemon")
 ax.legend()
 plt.show()
 ```
@@ -88,4 +88,4 @@ plt.show()
 ## Takeaways
 
 The histogram pretty clearly shows that there's a stark difference in base stats between the 2 groups. 
-Regular Pokémon mostly show up between about 200 and 600 while legendaries and mythicals are concentrated at the larger values. 
+Regular Pokemon mostly show up between about 200 and 600 while legendaries and mythicals are concentrated at the larger values. 
