@@ -1,4 +1,26 @@
+# Quarto build artifacts
 /.quarto/
 **/*.quarto_ipynb
 /_site/
+/_freeze/
+
+# Python (uv)
+.venv/
+__pycache__/
+.ipynb_checkpoints/
+
+# R (renv) — only renv.lock, .Rprofile, renv/activate.R are committed
+renv/library/
+renv/local/
+renv/staging/
+renv/cellar/
+renv/lock/
+renv/python/
+renv/sandbox/
+.Rhistory
+.RData
+.Rproj.user/
+
+# OS
 .DS_Store
+Thumbs.db
