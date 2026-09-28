@@ -2,6 +2,8 @@
   {
     "listing": "/blog.html",
     "items": [
+      "/posts/pokemon-generations-r/index.html",
+      "/posts/pokemon-legendary-python/index.html",
       "/posts/ddia-footnote/index.html"
     ]
   }

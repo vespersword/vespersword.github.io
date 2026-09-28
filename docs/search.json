@@ -1,17 +1,45 @@
 [
   {
+    "objectID": "posts/pokemon-legendary-python/index.html",
+    "href": "posts/pokemon-legendary-python/index.html",
+    "title": "How much stronger are legendary Pokemon? (Python)",
+    "section": "",
+    "text": "We’re gonna try exploring and proving with data whether legengaries are truly more powerful on average. (we’ll also take a look at mythicals)\nWe’re going to do a pretty rudimentary analysis, every Pokemon has six base stats (HP, Attack, Defense, Special Attack, Special Defense and Speed). We’re going to add these to get a base stat total (BST), which we treat as a rough measure of how strong a Pokemon is. Legendary Pokemon are supposed to be the strongest in the game, so this should help us get an idea of how big the gap is."
+  },
+  {
+    "objectID": "posts/pokemon-legendary-python/index.html#data",
+    "href": "posts/pokemon-legendary-python/index.html#data",
+    "title": "How much stronger are legendary Pokemon? (Python)",
+    "section": "Data",
+    "text": "Data\nThe data is from PokeAPI’s open dataset, taken from this repository: GitHub\nI use two tables: pokemon_species.csv (one row per species, with legendary and mythical flags) and pokemon_stats.csv (one row per Pokemon per stat).\n\nimport pandas as pd\nimport matplotlib.pyplot as plt\n\nspecies = pd.read_csv(\"../../data/pokeapi/pokemon_species.csv\")\npokemon_stats = pd.read_csv(\"../../data/pokeapi/pokemon_stats.csv\")\n\npokemon_stats.head()\n\n\n\n\n\n\n\n\npokemon_id\nstat_id\nbase_stat\neffort\n\n\n\n\n0\n1\n1\n45\n0\n\n\n1\n1\n2\n49\n0\n\n\n2\n1\n3\n49\n0\n\n\n3\n1\n4\n65\n1\n\n\n4\n1\n5\n65\n0"
+  },
+  {
+    "objectID": "posts/pokemon-legendary-python/index.html#calculating-base-stat-totals",
+    "href": "posts/pokemon-legendary-python/index.html#calculating-base-stat-totals",
+    "title": "How much stronger are legendary Pokemon? (Python)",
+    "section": "Calculating base stat totals",
+    "text": "Calculating base stat totals\nEach Pokemon has six rows in pokemon_stats, so summing base_stat by pokemon_id gives its BST. We then merge that with the species table. Each species’ default form has the same ID as the species, while alternate forms (like Mega evolutions) have IDs above 10000, so the merge keeps exactly one row per species.\n\nbst = pokemon_stats.groupby(\"pokemon_id\")[\"base_stat\"].sum().reset_index(name=\"bst\")\ndf = species.merge(bst, left_on=\"id\", right_on=\"pokemon_id\")\n\ndf[\"group\"] = \"Regular\"\ndf.loc[df[\"is_legendary\"] == 1, \"group\"] = \"Legendary\"\ndf.loc[df[\"is_mythical\"] == 1, \"group\"] = \"Mythical\"\n\ndf[[\"identifier\", \"generation_id\", \"bst\", \"group\"]].head()\n\n\n\n\n\n\n\n\nidentifier\ngeneration_id\nbst\ngroup\n\n\n\n\n0\nbulbasaur\n1\n318\nRegular\n\n\n1\nivysaur\n1\n405\nRegular\n\n\n2\nvenusaur\n1\n525\nRegular\n\n\n3\ncharmander\n1\n309\nRegular\n\n\n4\ncharmeleon\n1\n405\nRegular"
+  },
+  {
+    "objectID": "posts/pokemon-legendary-python/index.html#comparing-the-groups",
+    "href": "posts/pokemon-legendary-python/index.html#comparing-the-groups",
+    "title": "How much stronger are legendary Pokemon? (Python)",
+    "section": "Comparing the groups",
+    "text": "Comparing the groups\n\nsummary = df.groupby(\"group\")[\"bst\"].agg([\"count\", \"mean\", \"median\", \"min\", \"max\"])\nsummary.round(1)\n\n\n\nTable 1: Base stat total summary for regular, legendary and mythical Pokemon.\n\n\n\n\n\n\n\n\n\n\ncount\nmean\nmedian\nmin\nmax\n\n\ngroup\n\n\n\n\n\n\n\n\n\nLegendary\n71\n593.9\n580.0\n200\n690\n\n\nMythical\n23\n586.1\n600.0\n300\n720\n\n\nRegular\n931\n411.1\n425.0\n175\n670\n\n\n\n\n\n\n\n\n\n\nTable 1 shows legendary and mythical Pokemon average roughly 180 more base stat points than regular Pokemon. Most of the 1,025 species are regular, while legendary and mythical Pokemon together make up fewer than 100.\n\nbins = range(150, 751, 25)\nspecial = df[df[\"group\"] != \"Regular\"]\nregular = df[df[\"group\"] == \"Regular\"]\n\nax = regular[\"bst\"].plot.hist(bins=bins, alpha=0.6, label=\"Regular\")\nspecial[\"bst\"].plot.hist(bins=bins, alpha=0.6, label=\"Legendary / Mythical\", ax=ax)\nax.set_xlabel(\"Base stat total\")\nax.set_ylabel(\"Number of Pokemon\")\nax.legend()\nplt.show()\n\n\n\n\n\n\n\nFigure 1: Distribution of base stat totals for regular Pokemon compared with legendary and mythical Pokemon."
+  },
+  {
+    "objectID": "posts/pokemon-legendary-python/index.html#takeaways",
+    "href": "posts/pokemon-legendary-python/index.html#takeaways",
+    "title": "How much stronger are legendary Pokemon? (Python)",
+    "section": "Takeaways",
+    "text": "Takeaways\nThe histogram pretty clearly shows that there’s a stark difference in base stats between the 2 groups. Regular Pokemon mostly show up between about 200 and 600 while legendaries and mythicals are concentrated at the larger values."
+  },
+  {
     "objectID": "posts/ddia-footnote/index.html",
     "href": "posts/ddia-footnote/index.html",
     "title": "A footnote in DDIA sent me down the AI infrastructure rabbit hole",
     "section": "",
     "text": "I was reading the second edition of Designing Data-Intensive Applications and hit a short section comparing cloud computing to supercomputing. Clouds run on Ethernet and IP arranged in Clos topologies. Supercomputers use RDMA and weird topologies like 3D toruses. It reminded me of something I’d half-wondered about at work: AWS has this thing called Elastic Fabric Adapter for HPC workloads, so what’s NVIDIA’s equivalent? The short answer is “InfiniBand, roughly.” It’s correct and it taught me nothing.\nThe better question turned out to be why AWS built its own weird not-quite-RDMA networking stack when InfiniBand already existed. I kept asking why, and each answer opened up another layer: kernel bypass, why microseconds matter in some systems and not others, why one slow GPU can stall four thousand others, and why AWS decided tail latency mattered more than best-case latency. By the end, the cloud vs. supercomputer distinction I’d just read in DDIA didn’t really hold anymore. The hyperscalers have spent the last few years building supercomputers inside their clouds.\n\n\n\nA 2-tier Clos (spine–leaf) fabric: every leaf switch connects to every spine switch, so any two hosts sit the same number of hops apart.\n\n\nNone of this is really hidden. It’s all in AWS papers, NVIDIA docs, and conference talks. But nobody hands you the map, and every explanation I found assumed I already understood three other things. So the next post is my attempt at the map: EFA vs. InfiniBand vs. Ethernet, what a Clos network actually is, AllReduce as the reason any of it matters, and why a book from 2017 ended up wrong in an interesting way for modern AI workloads."
-  },
-  {
-    "objectID": "blog.html",
-    "href": "blog.html",
-    "title": "Blog",
-    "section": "",
-    "text": "A footnote in DDIA sent me down the AI infrastructure rabbit hole\n\n\n\n\n\n\n\n\nSep 8, 2026\n\n\nVaibhav Korrapati\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "about.html",
@@ -61,5 +89,47 @@
     "title": "Vaibhav’s AI Notebook",
     "section": "",
     "text": "Vaibhav Korrapati\n\n\nHi, I’m Vaibhav Korrapati. I worked on AI infrastructure at Amazon, most recently on AWS SageMaker HyperPod, keeping large-scale training and inference clusters running. This site is where I keep notes on the parts of machine learning I’m working through — models, inference, and the systems underneath them. I’m currently in the UBC Master of Data Science program, so some of it overlaps with coursework, but mostly it’s just what I’m reading and building."
+  },
+  {
+    "objectID": "blog.html",
+    "href": "blog.html",
+    "title": "Blog",
+    "section": "",
+    "text": "Have Pokemon gotten stronger over the generations? (R)\n\n\n\n\n\n\n\n\nSep 28, 2026\n\n\nVaibhav Korrapati\n\n\n\n\n\n\n\n\n\n\n\n\nHow much stronger are legendary Pokemon? (Python)\n\n\n\n\n\n\n\n\nSep 28, 2026\n\n\nVaibhav Korrapati\n\n\n\n\n\n\n\n\n\n\n\n\nA footnote in DDIA sent me down the AI infrastructure rabbit hole\n\n\n\n\n\n\n\n\nSep 8, 2026\n\n\nVaibhav Korrapati\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "posts/pokemon-generations-r/index.html",
+    "href": "posts/pokemon-generations-r/index.html",
+    "title": "Have Pokemon gotten stronger over the generations? (R)",
+    "section": "",
+    "text": "In this post, we’re going to analyze whether there’s been a “power creep” in Pokemon across generations. We’re going to do that by calculating base stat totals (BSTs) and do a comparison across generations."
+  },
+  {
+    "objectID": "posts/pokemon-generations-r/index.html#data",
+    "href": "posts/pokemon-generations-r/index.html#data",
+    "title": "Have Pokemon gotten stronger over the generations? (R)",
+    "section": "Data",
+    "text": "Data\nThe data is from PokeAPI’s open dataset, taken from this repository: GitHub\nWe use two tables: pokemon_species.csv (one row per species, with legendary and mythical flags) and pokemon_stats.csv (one row per Pokemon per stat).\nThe same tables are used in my Python post analysing cumulative stats.\n\nlibrary(readr)\nlibrary(dplyr)\nlibrary(ggplot2)\n\nspecies &lt;- read_csv(\"../../data/pokeapi/pokemon_species.csv\")\npokemon_stats &lt;- read_csv(\"../../data/pokeapi/pokemon_stats.csv\")\n\nhead(pokemon_stats)\n\n# A tibble: 6 × 4\n  pokemon_id stat_id base_stat effort\n       &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;  &lt;dbl&gt;\n1          1       1        45      0\n2          1       2        49      0\n3          1       3        49      0\n4          1       4        65      1\n5          1       5        65      0\n6          1       6        45      0"
+  },
+  {
+    "objectID": "posts/pokemon-generations-r/index.html#calculating-base-stat-totals",
+    "href": "posts/pokemon-generations-r/index.html#calculating-base-stat-totals",
+    "title": "Have Pokemon gotten stronger over the generations? (R)",
+    "section": "Calculating base stat totals",
+    "text": "Calculating base stat totals\nSumming base_stat for each pokemon_id gives its BST, which we then join with the species table to get an appropriate mapping. Legendary and mythical Pokemon are removed, because the number of legendaries varies a lot between generations and would skew the averages and we saw in the previous post that they have a much higher BST on average. The main intent here is to compare analyze power creep for regular Pokemon.\n\nbst &lt;- pokemon_stats |&gt;\n  group_by(pokemon_id) |&gt;\n  summarize(bst = sum(base_stat))\n\nregular &lt;- species |&gt;\n  left_join(bst, by = c(\"id\" = \"pokemon_id\")) |&gt;\n  filter(is_legendary == 0, is_mythical == 0) |&gt;\n  select(identifier, generation_id, bst)\n\nhead(regular)\n\n# A tibble: 6 × 3\n  identifier generation_id   bst\n  &lt;chr&gt;              &lt;dbl&gt; &lt;dbl&gt;\n1 bulbasaur              1   318\n2 ivysaur                1   405\n3 venusaur               1   525\n4 charmander             1   309\n5 charmeleon             1   405\n6 charizard              1   534"
+  },
+  {
+    "objectID": "posts/pokemon-generations-r/index.html#bst-by-generation",
+    "href": "posts/pokemon-generations-r/index.html#bst-by-generation",
+    "title": "Have Pokemon gotten stronger over the generations? (R)",
+    "section": "BST by generation",
+    "text": "BST by generation\n\nby_generation &lt;- regular |&gt;\n  group_by(generation_id) |&gt;\n  summarize(\n    n = n(),\n    mean_bst = round(mean(bst), 1),\n    median_bst = median(bst)\n  )\n\nknitr::kable(by_generation)\n\n\n\nTable 1: Base stat total of regular (non-legendary, non-mythical) Pokemon by generation.\n\n\n\n\n\n\ngeneration_id\nn\nmean_bst\nmedian_bst\n\n\n\n\n1\n146\n400.9\n405.0\n\n\n2\n94\n393.8\n410.0\n\n\n3\n125\n386.7\n405.0\n\n\n4\n93\n419.8\n450.0\n\n\n5\n143\n409.2\n418.0\n\n\n6\n66\n411.4\n417.0\n\n\n7\n72\n429.2\n469.5\n\n\n8\n84\n419.3\n470.0\n\n\n9\n108\n444.5\n483.0\n\n\n\n\n\n\n\n\n\nggplot(regular, aes(x = factor(generation_id), y = bst)) +\n  geom_boxplot(fill = \"lightblue\") +\n  labs(x = \"Generation\", y = \"Base stat total\")\n\n\n\n\n\n\n\nFigure 1: Base stat totals of regular Pokemon by generation. Each box shows the middle 50% of Pokemon; the line inside is the median."
+  },
+  {
+    "objectID": "posts/pokemon-generations-r/index.html#takeaways",
+    "href": "posts/pokemon-generations-r/index.html#takeaways",
+    "title": "Have Pokemon gotten stronger over the generations? (R)",
+    "section": "Takeaways",
+    "text": "Takeaways\nThere’s a power creep, but its fairly even until Gen 3. Table 1 shows the average regular Pokemon actually got slightly weaker in Gen 2 and 3, then rose unevenly after that, with Gen 9 having the strongest. The median in Figure 1 shows a bigger jump, from around 405 in Generation 1 to over 480 in Generation 9. The boxes still overlap heavily though so there are plenty of strong old gen Pokemon and weak new gen ones."
   }
 ]

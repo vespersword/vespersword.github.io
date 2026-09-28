@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://vespersword.github.io/posts/ddia-footnote/index.html</loc>
-    <lastmod>2026-09-08T16:51:06.737Z</lastmod>
+    <loc>https://vespersword.github.io/posts/pokemon-legendary-python/index.html</loc>
+    <lastmod>2026-09-28T08:12:23.886Z</lastmod>
   </url>
   <url>
-    <loc>https://vespersword.github.io/blog.html</loc>
-    <lastmod>2026-09-08T16:08:14.607Z</lastmod>
+    <loc>https://vespersword.github.io/posts/ddia-footnote/index.html</loc>
+    <lastmod>2026-09-08T16:51:06.737Z</lastmod>
   </url>
   <url>
     <loc>https://vespersword.github.io/about.html</loc>
@@ -15,5 +15,13 @@
   <url>
     <loc>https://vespersword.github.io/index.html</loc>
     <lastmod>2026-09-08T16:08:14.642Z</lastmod>
+  </url>
+  <url>
+    <loc>https://vespersword.github.io/blog.html</loc>
+    <lastmod>2026-09-08T16:08:14.607Z</lastmod>
+  </url>
+  <url>
+    <loc>https://vespersword.github.io/posts/pokemon-generations-r/index.html</loc>
+    <lastmod>2026-09-28T08:15:34.234Z</lastmod>
   </url>
 </urlset>
