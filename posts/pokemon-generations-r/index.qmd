@@ -1,0 +1,90 @@
+---
+title: "Have Pokemon gotten stronger over the generations? (R)"
+author: "Vaibhav Korrapati"
+date: 2026-09-28
+categories: [r, pokemon, data analysis]
+---
+
+In this post, we're going to analyze whether there's been a "power creep" in
+Pokemon across generations. We're going to do that by calculating base stat totals (BSTs)
+and do a comparison across generations.
+
+## Data
+
+The data is from [PokeAPI](https://pokeapi.co/)'s open dataset, taken from
+this repository: [GitHub](https://github.com/PokeAPI/pokeapi/tree/master/data/v2/csv)
+
+We use two tables: `pokemon_species.csv` (one row per species, with legendary
+and mythical flags) and `pokemon_stats.csv` (one row per Pokemon per stat).
+
+The same tables are used in my [Python post](../pokemon-legendary-python/index.qmd) analysing cumulative stats.
+
+```{r}
+#| label: load-data
+#| message: false
+#| warning: false
+library(readr)
+library(dplyr)
+library(ggplot2)
+
+species <- read_csv("../../data/pokeapi/pokemon_species.csv")
+pokemon_stats <- read_csv("../../data/pokeapi/pokemon_stats.csv")
+
+head(pokemon_stats)
+```
+
+## Calculating base stat totals
+
+Summing `base_stat` for each `pokemon_id` gives its BST, which we then join with the
+species table to get an appropriate mapping. Legendary and mythical Pokemon are removed, because the number
+of legendaries varies a lot between generations and would skew the averages and we saw in
+the previous post that they have a much higher BST on average. The main intent here is to compare
+analyze power creep for regular Pokemon.
+
+```{r}
+#| label: compute-bst
+bst <- pokemon_stats |>
+  group_by(pokemon_id) |>
+  summarize(bst = sum(base_stat))
+
+regular <- species |>
+  left_join(bst, by = c("id" = "pokemon_id")) |>
+  filter(is_legendary == 0, is_mythical == 0) |>
+  select(identifier, generation_id, bst)
+
+head(regular)
+```
+
+## BST by generation
+
+```{r}
+#| label: tbl-bst-by-generation
+#| tbl-cap: "Base stat total of regular (non-legendary, non-mythical) Pokemon by generation."
+by_generation <- regular |>
+  group_by(generation_id) |>
+  summarize(
+    n = n(),
+    mean_bst = round(mean(bst), 1),
+    median_bst = median(bst)
+  )
+
+knitr::kable(by_generation)
+```
+
+```{r}
+#| label: fig-bst-by-generation
+#| fig-cap: "Base stat totals of regular Pokemon by generation. Each box shows the middle 50% of Pokemon; the line inside is the median."
+#| fig-alt: "Boxplots of base stat total for generations 1 to 9. Medians sit between about 405 and 450 for generations 1 to 6 and rise to between 470 and 483 for generations 7 to 9."
+ggplot(regular, aes(x = factor(generation_id), y = bst)) +
+  geom_boxplot(fill = "lightblue") +
+  labs(x = "Generation", y = "Base stat total")
+```
+
+## Takeaways
+
+There's a power creep, but its fairly even until Gen 3. @tbl-bst-by-generation
+shows the average regular Pokemon actually got slightly weaker in Gen 2
+and 3, then rose unevenly after that, with Gen 9 having the strongest. The
+median in @fig-bst-by-generation shows a bigger jump, from around 405 in
+Generation 1 to over 480 in Generation 9. The boxes still overlap heavily though so
+there are plenty of strong old gen Pokemon and weak new gen ones.
